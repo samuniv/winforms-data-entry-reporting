@@ -50,14 +50,50 @@ A self‑contained Windows desktop application for managing customer and order d
 ```
 
 - Single executable hosts UI, data access, and reporting
-- EF Core `AppDbContext` applies migrations on startup
-- `app.config` stores SQLite connection and user settings
+- EF Core `AppDbContext` applies migrations on startup via `DbInitializer.Initialize()`
+- `app.config` stores SQLite connection string
+- User settings stored in `Properties.Settings.Default` (ApplicationSettings)
 
 ---
 
 ## 4. Feature Implementation Details
 
-### 4.1 Customer Management
+### 4.0 Main Application Form
+
+- **UI**: `MainForm` with:
+  - Menu bar with File, Data, Reports, Tools, Help menus
+  - Toolbar with quick access buttons for common actions
+  - Status bar showing connection status and current user
+  - MDI container or tab control for child forms
+
+- **Navigation**:
+  - File menu: New, Open, Save, Exit
+  - Data menu: Customers, Orders, Dashboard
+  - Reports menu: Customer Reports, Order Reports, Export options
+  - Tools menu: Settings, Import, Backup/Restore
+  - Help menu: Help, About
+
+### 4.1 Data Models
+
+- **Customer Entity**:
+  - `Id` (int, primary key, auto-increment)
+  - `Name` (string, required, max 100 chars)
+  - `Email` (string, required, unique, email format)
+  - `Phone` (string, optional, formatted)
+  - `Address` (string, optional, max 200 chars)
+  - `CreatedDate` (DateTime, auto-set)
+  - `ModifiedDate` (DateTime, auto-update)
+
+- **Order Entity**:
+  - `Id` (int, primary key, auto-increment)
+  - `CustomerId` (int, foreign key to Customer)
+  - `Quantity` (int, required, range 1-1000)
+  - `OrderDate` (DateTime, required, no future dates)
+  - `IsDeleted` (bool, default false, for soft delete)
+  - `CreatedDate` (DateTime, auto-set)
+  - `ModifiedDate` (DateTime, auto-update)
+
+### 4.2 Customer Management
 
 - **UI**: `CustomerForm` with TextBoxes for Name, Email, Phone, Address
 - **Validation**:
@@ -77,7 +113,7 @@ A self‑contained Windows desktop application for managing customer and order d
   - Two-way binding: `BindingSource` for grid and form fields
   - On save/update, refresh `BindingSource.List`
 
-### 4.2 Order Management
+### 4.3 Order Management
 
 - **UI**: `OrderForm` with:
 
@@ -100,7 +136,7 @@ A self‑contained Windows desktop application for managing customer and order d
   - Prevent order creation if no customers exist
   - Display warning if stock < threshold (stub for future logic)
 
-### 4.3 Grid & Chart Dashboard
+### 4.4 Grid & Chart Dashboard
 
 - **Grid**:
 
@@ -117,7 +153,7 @@ A self‑contained Windows desktop application for managing customer and order d
   - Central `DataRefreshService` raises event on data change
   - Dashboard subscribes and calls `ReloadData()`
 
-### 4.4 Reporting & Export
+### 4.5 Reporting & Export
 
 - **C1Report Templates**:
 
@@ -130,45 +166,45 @@ A self‑contained Windows desktop application for managing customer and order d
   - Excel: `C1FlexGrid.SaveExcel()` with column visibility settings
   - Prompt user with `SaveFileDialog`, remember last path in settings
 
-### 4.5 User Preferences
+### 4.6 User Preferences
 
 - **SettingsForm**:
 
-  - Theme selection: light/dark toggles WinForms colors via `Application.SetHighDpiMode`
-  - Default export folder: browse dialog
+  - Theme selection: light/dark theme toggles WinForms appearance and colors
+  - Default export folder: browse dialog to select default paths
 
 - **Persistence**:
 
   - Use `UserScopedSettings` (`Properties.Settings.Default`)
   - Save on form close, load on startup
 
-### 4.6 Additional Essential Features
+### 4.7 Additional Essential Features
 
-#### 4.6.1 Logging & Error Handling
+#### 4.7.1 Logging & Error Handling
 
 - **Global Exception Handler**: catch unhandled exceptions via `Application.ThreadException` and `AppDomain.CurrentDomain.UnhandledException` events
 - **Logging**: write structured logs to file using `Serilog` or built-in `TraceSource`; include timestamps, stack traces
 - **Error Dialog**: friendly error dialogs prompting to report issues; auto-save current form data
 
-#### 4.6.2 Data Import
+#### 4.7.2 Data Import
 
 - **CSV/Excel Import**: allow users to import customer/order lists from `.csv` or `.xlsx`
 - **Mapping UI**: simple mapping wizard to match columns to entity properties
 - **Validation & Preview**: show preview rows and highlight errors before commit
 - **Bulk Insert**: perform in transaction with rollback on failure
 
-#### 4.6.3 Backup & Restore
+#### 4.7.3 Backup & Restore
 
 - **Backup**: user-triggered export of `data.db` to timestamped `.bak` file
 - **Restore**: option to select a backup file and replace current database (with confirmation)
 - **Auto-Backup Option**: scheduled nightly backup via Windows Task Scheduler integration stub
 
-#### 4.6.4 Help & About
+#### 4.7.4 Help & About
 
 - **Help Menu**: link to local `README.pdf` or online documentation
 - **About Dialog**: display application version, author, license, and license key entry for future commercial use
 
-#### 4.6.5 Auto-Update Stub
+#### 4.7.5 Auto-Update Stub
 
 - **Update Check**: menu option to check for new versions via HTTP endpoint (URL configurable)
 - **Download & Install**: download installer and launch it; prompt user to restart application
@@ -182,3 +218,42 @@ A self‑contained Windows desktop application for managing customer and order d
 3. **Entry**: Form validation → repo operation → commit → `DataRefreshService.Notify()`
 4. **Dashboard**: Listens to refresh events → reload grid & charts
 5. **Export/Print**: User action → generate report/grid export → file output or print
+
+---
+
+## 6. Database Initialization & Setup
+
+### 6.1 DbInitializer.Initialize()
+
+- **Database Creation**: Check if `data.db` exists, create if missing
+- **Migration Application**: Run EF Core migrations to ensure schema is up-to-date
+- **Seed Data**: Create initial sample customer and order data for demonstration
+- **Connection String**: Configure SQLite connection from `app.config`
+- **Error Handling**: Handle database creation and migration failures gracefully
+
+### 6.2 Entity Framework Configuration
+
+- **DbContext**: `AppDbContext` inheriting from `DbContext`
+- **Entities**: Configure Customer and Order entities with proper relationships
+- **Constraints**: Set up foreign keys, indexes, and validation constraints
+- **Connection**: SQLite provider with local file database
+
+---
+
+## 7. ComponentOne Controls Setup
+
+### 7.1 License Requirements
+
+- **ComponentOne License**: Application requires valid ComponentOne WinForms Edition license
+- **License Key**: Store license key in app configuration
+- **Runtime Distribution**: Include ComponentOne runtime libraries in deployment
+
+### 7.2 Control Configuration
+
+- **C1FlexGrid**: Configure for data binding, sorting, filtering, and virtual mode
+- **C1Chart**: Set up for dynamic data visualization with tooltips
+- **C1Report**: Configure report templates and export formats
+
+---
+
+## 5. Data Flow & Sequence

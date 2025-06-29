@@ -1,0 +1,93 @@
+{
+	"meta": {
+		"generatedAt": "2025-06-29T19:14:13.358Z",
+		"tasksAnalyzed": 10,
+		"totalTasks": 10,
+		"analysisCount": 10,
+		"thresholdScore": 5,
+		"projectName": "Taskmaster",
+		"usedResearch": true
+	},
+	"complexityAnalysis": [
+		{
+			"taskId": 1,
+			"taskTitle": "Project Setup and Core Dependency Installation",
+			"complexityScore": 3,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Break down the project setup task into four subtasks: 1. Create the initial .NET 9 WinForms solution and project. 2. Install and verify all required NuGet packages. 3. Establish the core project folder structure (Models, Repositories, etc.). 4. Configure the app.config and ComponentOne licensing.",
+			"reasoning": "This is a foundational task with several distinct configuration steps. While not logically complex, each step is critical and must be correct. Breaking it down ensures each dependency and configuration aspect is handled properly before building upon it."
+		},
+		{
+			"taskId": 2,
+			"taskTitle": "Define EF Core Models and Database Initialization",
+			"complexityScore": 5,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Expand the database initialization task into four subtasks: 1. Define the `Customer` and `Order` entity classes with properties and data annotations. 2. Implement the `AppDbContext`, defining `DbSet`s and configuring entity relationships in `OnModelCreating`. 3. Create the initial EF Core migration. 4. Develop the `DbInitializer` class to apply migrations and seed initial data, and integrate it into the application's startup sequence.",
+			"reasoning": "This task combines data modeling, ORM configuration, schema management (migrations), and application startup logic (seeding). Separating these concerns is crucial for clarity, testability, and managing the moderate complexity of getting the data layer right from the start."
+		},
+		{
+			"taskId": 3,
+			"taskTitle": "Implement Main Application Shell and Navigation",
+			"complexityScore": 3,
+			"recommendedSubtasks": 3,
+			"expansionPrompt": "Break down the main application shell task into three subtasks: 1. Design the `MainForm` and implement the `MenuStrip` and `ToolStrip` with all specified items and icons. 2. Add and configure the `StatusStrip` at the bottom of the form. 3. Implement the MDI or `TabControl` container to host child forms and create the basic logic for opening forms from menu clicks.",
+			"reasoning": "The task is primarily UI design with low logical complexity. Breaking it down by major UI component (menu/toolbar, status bar, content host) allows for a focused approach on each part of the shell's responsibility and visual structure."
+		},
+		{
+			"taskId": 4,
+			"taskTitle": "Develop Customer Management Form and Repository",
+			"complexityScore": 7,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "Expand the customer management task into five subtasks: 1. Design the UI for `CustomerForm`. 2. Implement the `CustomerRepository` with all async CRUD methods. 3. Configure data binding on the `CustomerForm` using `BindingSource`. 4. Implement client-side validation using `ErrorProvider`. 5. Implement the save functionality, ensuring repository calls are wrapped in a database transaction.",
+			"reasoning": "This is a core feature with multiple layers: UI, data binding, business logic (validation), and data access (repository). The complexity warrants separating UI design, data access logic, the connection between them (binding), validation, and persistence logic into distinct subtasks."
+		},
+		{
+			"taskId": 5,
+			"taskTitle": "Develop Order Management Form and Repository",
+			"complexityScore": 8,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "Expand the order management task into five subtasks: 1. Design the `OrderForm` UI, including the customer lookup `ComboBox`. 2. Implement the `OrderRepository` with methods for add, update, and soft-delete. 3. Implement the form logic to populate the customer `ComboBox` and bind other controls. 4. Implement validation for `OrderDate` and `Quantity`. 5. Implement the business rule to disable the save button if no customers exist.",
+			"reasoning": "This task is more complex than customer management due to its dependency on customer data in the UI, specific business rules (date validation), and more complex data logic (soft-delete). Separating UI, repository, data binding, validation, and specific business logic is essential for managing this high complexity."
+		},
+		{
+			"taskId": 6,
+			"taskTitle": "Implement Dashboard with C1FlexGrid and C1Chart",
+			"complexityScore": 6,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Break down the dashboard implementation into four subtasks: 1. Set up `DashboardForm` and bind the `C1FlexGrid` to the order data, configuring sorting and filtering. 2. Develop the LINQ query to aggregate order data for the chart. 3. Bind the `C1Chart` to the aggregated data and configure its appearance. 4. Implement the `DataRefreshService` and subscribe the dashboard to its `OnDataChanged` event for automatic updates.",
+			"reasoning": "The complexity lies in integrating two distinct third-party controls, writing data aggregation queries, and implementing a dynamic refresh mechanism. Subtasks should isolate the grid implementation, the chart implementation, the data preparation logic, and the refresh service."
+		},
+		{
+			"taskId": 7,
+			"taskTitle": "Create Reports and Data Exports",
+			"complexityScore": 7,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Expand the reporting and export task into four subtasks: 1. Design the `Invoice.xml` and `Summary.xml` report templates using the C1Report Designer. 2. Implement a `ReportService` to load, populate, and render C1Report definitions. 3. Integrate the `ReportService` to generate and export a PDF invoice. 4. Add 'Export to Excel' functionality to the dashboard's `C1FlexGrid`.",
+			"reasoning": "This task involves a specialized external tool (Report Designer) and the C1Report API, which adds significant complexity. Separating template design, the report generation service, PDF export, and the simpler Excel export helps manage the different technologies and features involved."
+		},
+		{
+			"taskId": 8,
+			"taskTitle": "Implement User Preferences and Settings Form",
+			"complexityScore": 2,
+			"recommendedSubtasks": 3,
+			"expansionPrompt": "Break down the settings task into three subtasks: 1. Create the `SettingsForm` UI with controls for theme and export path. 2. Implement the logic to load and save settings using `Properties.Settings.Default`. 3. Implement the logic in the main application to apply the saved theme and use the default export path.",
+			"reasoning": "This is a standard feature with strong framework support, making it low complexity. The task still has three logical parts: the UI, the persistence logic, and the application of the settings, which are suitable for subtask separation."
+		},
+		{
+			"taskId": 9,
+			"taskTitle": "Set Up Global Error Handling and Logging",
+			"complexityScore": 4,
+			"recommendedSubtasks": 3,
+			"expansionPrompt": "Expand the error handling task into three subtasks: 1. Implement the global exception handlers for `Application.ThreadException` and `AppDomain.CurrentDomain.UnhandledException`. 2. Configure Serilog to write structured logs to a rolling file. 3. Create a reusable `ErrorDialog` form to display user-friendly error messages.",
+			"reasoning": "While low on code volume, this is a high-impact architectural task. The complexity is moderate due to the need to correctly handle AppDomain events and configure logging. The subtasks separate catching exceptions, logging them for developers, and informing the user."
+		},
+		{
+			"taskId": 10,
+			"taskTitle": "Implement Data Import, Backup, and Restore Utilities",
+			"complexityScore": 9,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Expand the data utilities task into four subtasks: 1. Develop the CSV import wizard for parsing and column mapping. 2. Implement the transactional bulk insert logic for the import feature. 3. Implement the database backup utility. 4. Implement the high-risk database restore utility, including strong user warnings and application state management.",
+			"reasoning": "This task is highly complex, combining a multi-step import wizard, transactional database operations, and a high-risk restore feature. The restore function alone is complex due to the risk of data loss and the need for careful state management. Breaking it down is critical to mitigate risk."
+		}
+	]
+}
