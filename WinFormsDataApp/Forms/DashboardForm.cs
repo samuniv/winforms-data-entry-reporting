@@ -152,10 +152,34 @@ namespace WinFormsDataApp.Forms
                     .ToList();
 
                 _chartDataBindingSource.DataSource = monthlyData;
-                ConfigureChart();
+
+                // Try to configure chart, with fallback handling
+                try
+                {
+                    ConfigureChart();
+                }
+                catch (Exception chartEx)
+                {
+                    LoggingService.LogError(chartEx, "Chart configuration failed, hiding chart");
+
+                    // Hide chart if it's not working
+                    if (chart != null)
+                    {
+                        chart.Visible = false;
+                    }
+
+                    // Show error message to user
+                    MessageBox.Show(
+                        "Chart functionality is not available due to compatibility issues.\n" +
+                        "Data grid and export features are still fully functional.",
+                        "Chart Warning",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+                }
             }
             catch (Exception ex)
             {
+                LoggingService.LogError(ex, "Error generating chart data");
                 MessageBox.Show($"Error generating chart data: {ex.Message}", "Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
@@ -167,8 +191,10 @@ namespace WinFormsDataApp.Forms
 
             try
             {
+                // Clear existing chart data
                 chart.Series.Clear();
                 chart.ChartAreas.Clear();
+                chart.DataSource = null;
 
                 // Create chart area
                 var chartArea = new ChartArea("MainArea");
@@ -184,14 +210,28 @@ namespace WinFormsDataApp.Forms
                 series.Color = Color.SteelBlue;
                 series.BorderWidth = 2;
 
-                // Add data points
+                // Add data points manually (avoiding data binding issues)
                 var chartData = _chartDataBindingSource.DataSource as List<dynamic>;
-                if (chartData != null)
+                if (chartData != null && chartData.Count > 0)
                 {
                     foreach (var item in chartData)
                     {
-                        series.Points.AddXY(item.Period, item.TotalValue);
+                        try
+                        {
+                            var period = item.Period?.ToString() ?? "Unknown";
+                            var value = Convert.ToDouble(item.TotalValue);
+                            series.Points.AddXY(period, value);
+                        }
+                        catch (Exception ex)
+                        {
+                            LoggingService.LogWarning($"Failed to add chart point: {ex.Message}");
+                        }
                     }
+                }
+                else
+                {
+                    // Add placeholder data if no data available
+                    series.Points.AddXY("No Data", 0);
                 }
 
                 chart.Series.Add(series);
@@ -206,11 +246,28 @@ namespace WinFormsDataApp.Forms
                 var legend = new Legend("MainLegend");
                 legend.Docking = Docking.Right;
                 chart.Legends.Add(legend);
+
+                // Force chart refresh
+                chart.Invalidate();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error configuring chart: {ex.Message}", "Chart Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                LoggingService.LogError(ex, "Error configuring chart");
+
+                // Display error message on chart
+                try
+                {
+                    chart.Series.Clear();
+                    chart.ChartAreas.Clear();
+                    chart.Titles.Clear();
+                    chart.Titles.Add("Chart Error: " + ex.Message);
+                    chart.Titles[0].Font = new Font("Arial", 10, FontStyle.Bold);
+                    chart.Titles[0].ForeColor = Color.Red;
+                }
+                catch
+                {
+                    // If even basic chart operations fail, we'll handle it in the UI
+                }
             }
         }
 
