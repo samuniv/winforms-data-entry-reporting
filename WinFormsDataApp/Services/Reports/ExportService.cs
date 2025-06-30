@@ -12,46 +12,50 @@ namespace WinFormsDataApp.Services.Reports
             {
                 LoggingService.LogInformation($"Exporting {customers.Count()} customers to Excel: {filePath}");
 
-                using var workbook = new XLWorkbook();
-                var worksheet = workbook.Worksheets.Add("Customers");
-
-                // Add header row
-                worksheet.Cell(1, 1).Value = "ID";
-                worksheet.Cell(1, 2).Value = "Name";
-                worksheet.Cell(1, 3).Value = "Email";
-                worksheet.Cell(1, 4).Value = "Phone";
-                worksheet.Cell(1, 5).Value = "Address";
-
-                // Style header row
-                var headerRange = worksheet.Range(1, 1, 1, 5);
-                headerRange.Style.Font.Bold = true;
-                headerRange.Style.Fill.BackgroundColor = XLColor.LightBlue;
-                headerRange.Style.Border.OutsideBorder = XLBorderStyleValues.Thick;
-
-                // Add data rows
-                int row = 2;
-                foreach (var customer in customers)
+                await Task.Run(() =>
                 {
-                    worksheet.Cell(row, 1).Value = customer.Id;
-                    worksheet.Cell(row, 2).Value = customer.Name;
-                    worksheet.Cell(row, 3).Value = customer.Email;
-                    worksheet.Cell(row, 4).Value = customer.Phone;
-                    worksheet.Cell(row, 5).Value = customer.Address;
-                    row++;
-                }
+                    using var workbook = new XLWorkbook();
+                    var worksheet = workbook.Worksheets.Add("Customers");
 
-                // Auto-fit columns
-                worksheet.Columns().AdjustToContents();
+                    // Add header row
+                    worksheet.Cell(1, 1).Value = "ID";
+                    worksheet.Cell(1, 2).Value = "Name";
+                    worksheet.Cell(1, 3).Value = "Email";
+                    worksheet.Cell(1, 4).Value = "Phone";
+                    worksheet.Cell(1, 5).Value = "Address";
 
-                // Add borders to data
-                if (row > 2)
-                {
-                    var dataRange = worksheet.Range(1, 1, row - 1, 5);
-                    dataRange.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
-                    dataRange.Style.Border.InsideBorder = XLBorderStyleValues.Thin;
-                }
+                    // Style header row
+                    var headerRange = worksheet.Range(1, 1, 1, 5);
+                    headerRange.Style.Font.Bold = true;
+                    headerRange.Style.Fill.BackgroundColor = XLColor.LightBlue;
+                    headerRange.Style.Border.OutsideBorder = XLBorderStyleValues.Thick;
 
-                workbook.SaveAs(filePath);
+                    // Add data rows
+                    int row = 2;
+                    foreach (var customer in customers)
+                    {
+                        worksheet.Cell(row, 1).Value = customer.Id;
+                        worksheet.Cell(row, 2).Value = customer.Name;
+                        worksheet.Cell(row, 3).Value = customer.Email;
+                        worksheet.Cell(row, 4).Value = customer.Phone;
+                        worksheet.Cell(row, 5).Value = customer.Address;
+                        row++;
+                    }
+
+                    // Auto-fit columns
+                    worksheet.Columns().AdjustToContents();
+
+                    // Add borders to data
+                    if (row > 2)
+                    {
+                        var dataRange = worksheet.Range(1, 1, row - 1, 5);
+                        dataRange.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+                        dataRange.Style.Border.InsideBorder = XLBorderStyleValues.Thin;
+                    }
+
+                    workbook.SaveAs(filePath);
+                });
+
                 LoggingService.LogInformation($"Customers exported successfully to: {filePath}");
             }
             catch (Exception ex)
@@ -69,87 +73,91 @@ namespace WinFormsDataApp.Services.Reports
 
                 var customerLookup = customers.ToDictionary(c => c.Id, c => c.Name);
 
-                using var workbook = new XLWorkbook();
-                var worksheet = workbook.Worksheets.Add("Orders");
-
-                // Add header row
-                worksheet.Cell(1, 1).Value = "Order ID";
-                worksheet.Cell(1, 2).Value = "Customer";
-                worksheet.Cell(1, 3).Value = "Customer ID";
-                worksheet.Cell(1, 4).Value = "Quantity";
-                worksheet.Cell(1, 5).Value = "Order Date";
-                worksheet.Cell(1, 6).Value = "Unit Price";
-                worksheet.Cell(1, 7).Value = "Total Value";
-                worksheet.Cell(1, 8).Value = "Status";
-
-                // Style header row
-                var headerRange = worksheet.Range(1, 1, 1, 8);
-                headerRange.Style.Font.Bold = true;
-                headerRange.Style.Fill.BackgroundColor = XLColor.LightGreen;
-                headerRange.Style.Border.OutsideBorder = XLBorderStyleValues.Thick;
-
-                // Add data rows
-                int row = 2;
-                foreach (var order in orders)
+                await Task.Run(() =>
                 {
-                    var customerName = customerLookup.GetValueOrDefault(order.CustomerId, "Unknown");
-                    var unitPrice = 10.00m; // Sample price
-                    var totalValue = order.Quantity * unitPrice;
+                    using var workbook = new XLWorkbook();
+                    var worksheet = workbook.Worksheets.Add("Orders");
 
-                    worksheet.Cell(row, 1).Value = order.Id;
-                    worksheet.Cell(row, 2).Value = customerName;
-                    worksheet.Cell(row, 3).Value = order.CustomerId;
-                    worksheet.Cell(row, 4).Value = order.Quantity;
-                    worksheet.Cell(row, 5).Value = order.OrderDate;
-                    worksheet.Cell(row, 6).Value = unitPrice;
-                    worksheet.Cell(row, 7).Value = totalValue;
-                    worksheet.Cell(row, 8).Value = order.IsDeleted ? "Deleted" : "Active";
+                    // Add header row
+                    worksheet.Cell(1, 1).Value = "Order ID";
+                    worksheet.Cell(1, 2).Value = "Customer";
+                    worksheet.Cell(1, 3).Value = "Customer ID";
+                    worksheet.Cell(1, 4).Value = "Quantity";
+                    worksheet.Cell(1, 5).Value = "Order Date";
+                    worksheet.Cell(1, 6).Value = "Unit Price";
+                    worksheet.Cell(1, 7).Value = "Total Value";
+                    worksheet.Cell(1, 8).Value = "Status";
 
-                    // Format currency columns
-                    worksheet.Cell(row, 6).Style.NumberFormat.Format = "$#,##0.00";
-                    worksheet.Cell(row, 7).Style.NumberFormat.Format = "$#,##0.00";
+                    // Style header row
+                    var headerRange = worksheet.Range(1, 1, 1, 8);
+                    headerRange.Style.Font.Bold = true;
+                    headerRange.Style.Fill.BackgroundColor = XLColor.LightGreen;
+                    headerRange.Style.Border.OutsideBorder = XLBorderStyleValues.Thick;
 
-                    // Format date column
-                    worksheet.Cell(row, 5).Style.NumberFormat.Format = "mm/dd/yyyy";
-
-                    // Color deleted orders
-                    if (order.IsDeleted)
+                    // Add data rows
+                    int row = 2;
+                    foreach (var order in orders)
                     {
-                        var rowRange = worksheet.Range(row, 1, row, 8);
-                        rowRange.Style.Font.FontColor = XLColor.Red;
-                        rowRange.Style.Font.Strikethrough = true;
+                        var customerName = customerLookup.GetValueOrDefault(order.CustomerId, "Unknown");
+                        var unitPrice = 10.00m; // Sample price
+                        var totalValue = order.Quantity * unitPrice;
+
+                        worksheet.Cell(row, 1).Value = order.Id;
+                        worksheet.Cell(row, 2).Value = customerName;
+                        worksheet.Cell(row, 3).Value = order.CustomerId;
+                        worksheet.Cell(row, 4).Value = order.Quantity;
+                        worksheet.Cell(row, 5).Value = order.OrderDate;
+                        worksheet.Cell(row, 6).Value = unitPrice;
+                        worksheet.Cell(row, 7).Value = totalValue;
+                        worksheet.Cell(row, 8).Value = order.IsDeleted ? "Deleted" : "Active";
+
+                        // Format currency columns
+                        worksheet.Cell(row, 6).Style.NumberFormat.Format = "$#,##0.00";
+                        worksheet.Cell(row, 7).Style.NumberFormat.Format = "$#,##0.00";
+
+                        // Format date column
+                        worksheet.Cell(row, 5).Style.NumberFormat.Format = "mm/dd/yyyy";
+
+                        // Color deleted orders
+                        if (order.IsDeleted)
+                        {
+                            var rowRange = worksheet.Range(row, 1, row, 8);
+                            rowRange.Style.Font.FontColor = XLColor.Red;
+                            rowRange.Style.Font.Strikethrough = true;
+                        }
+
+                        row++;
                     }
 
-                    row++;
-                }
+                    // Auto-fit columns
+                    worksheet.Columns().AdjustToContents();
 
-                // Auto-fit columns
-                worksheet.Columns().AdjustToContents();
+                    // Add borders to data
+                    if (row > 2)
+                    {
+                        var dataRange = worksheet.Range(1, 1, row - 1, 8);
+                        dataRange.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+                        dataRange.Style.Border.InsideBorder = XLBorderStyleValues.Thin;
+                    }
 
-                // Add borders to data
-                if (row > 2)
-                {
-                    var dataRange = worksheet.Range(1, 1, row - 1, 8);
-                    dataRange.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
-                    dataRange.Style.Border.InsideBorder = XLBorderStyleValues.Thin;
-                }
+                    // Add totals row
+                    if (row > 2)
+                    {
+                        worksheet.Cell(row, 3).Value = "TOTALS:";
+                        worksheet.Cell(row, 3).Style.Font.Bold = true;
 
-                // Add totals row
-                if (row > 2)
-                {
-                    worksheet.Cell(row, 3).Value = "TOTALS:";
-                    worksheet.Cell(row, 3).Style.Font.Bold = true;
+                        worksheet.Cell(row, 4).FormulaA1 = $"SUM(D2:D{row - 1})";
+                        worksheet.Cell(row, 7).FormulaA1 = $"SUM(G2:G{row - 1})";
 
-                    worksheet.Cell(row, 4).FormulaA1 = $"SUM(D2:D{row - 1})";
-                    worksheet.Cell(row, 7).FormulaA1 = $"SUM(G2:G{row - 1})";
+                        var totalsRange = worksheet.Range(row, 3, row, 7);
+                        totalsRange.Style.Font.Bold = true;
+                        totalsRange.Style.Fill.BackgroundColor = XLColor.LightYellow;
+                        totalsRange.Style.Border.OutsideBorder = XLBorderStyleValues.Thick;
+                    }
 
-                    var totalsRange = worksheet.Range(row, 3, row, 7);
-                    totalsRange.Style.Font.Bold = true;
-                    totalsRange.Style.Fill.BackgroundColor = XLColor.LightYellow;
-                    totalsRange.Style.Border.OutsideBorder = XLBorderStyleValues.Thick;
-                }
+                    workbook.SaveAs(filePath);
+                });
 
-                workbook.SaveAs(filePath);
                 LoggingService.LogInformation($"Orders exported successfully to: {filePath}");
             }
             catch (Exception ex)
@@ -166,21 +174,25 @@ namespace WinFormsDataApp.Services.Reports
             {
                 LoggingService.LogInformation($"Exporting summary report to Excel: {filePath}");
 
-                using var workbook = new XLWorkbook();
+                await Task.Run(() =>
+                {
+                    using var workbook = new XLWorkbook();
 
-                // Summary Statistics Sheet
-                var summarySheet = workbook.Worksheets.Add("Summary");
-                await CreateSummarySheet(summarySheet, orders, customers, startDate, endDate);
+                    // Summary Statistics Sheet
+                    var summarySheet = workbook.Worksheets.Add("Summary");
+                    CreateSummarySheet(summarySheet, orders, customers, startDate, endDate);
 
-                // Orders Detail Sheet
-                var ordersSheet = workbook.Worksheets.Add("Orders Detail");
-                await CreateOrdersDetailSheet(ordersSheet, orders, customers);
+                    // Orders Detail Sheet
+                    var ordersSheet = workbook.Worksheets.Add("Orders Detail");
+                    CreateOrdersDetailSheet(ordersSheet, orders, customers);
 
-                // Customer Summary Sheet
-                var customerSheet = workbook.Worksheets.Add("Customer Summary");
-                await CreateCustomerSummarySheet(customerSheet, orders, customers);
+                    // Customer Summary Sheet
+                    var customerSheet = workbook.Worksheets.Add("Customer Summary");
+                    CreateCustomerSummarySheet(customerSheet, orders, customers);
 
-                workbook.SaveAs(filePath);
+                    workbook.SaveAs(filePath);
+                });
+
                 LoggingService.LogInformation($"Summary report exported successfully to: {filePath}");
             }
             catch (Exception ex)
@@ -190,7 +202,7 @@ namespace WinFormsDataApp.Services.Reports
             }
         }
 
-        private async Task CreateSummarySheet(IXLWorksheet worksheet, IEnumerable<Order> orders,
+        private void CreateSummarySheet(IXLWorksheet worksheet, IEnumerable<Order> orders,
                                             IEnumerable<Customer> customers, DateTime startDate, DateTime endDate)
         {
             // Title
@@ -234,12 +246,12 @@ namespace WinFormsDataApp.Services.Reports
             worksheet.Columns().AdjustToContents();
         }
 
-        private async Task CreateOrdersDetailSheet(IXLWorksheet worksheet, IEnumerable<Order> orders, IEnumerable<Customer> customers)
+        private void CreateOrdersDetailSheet(IXLWorksheet worksheet, IEnumerable<Order> orders, IEnumerable<Customer> customers)
         {
-            await ExportOrdersToWorksheet(worksheet, orders, customers);
+            ExportOrdersToWorksheet(worksheet, orders, customers);
         }
 
-        private async Task CreateCustomerSummarySheet(IXLWorksheet worksheet, IEnumerable<Order> orders, IEnumerable<Customer> customers)
+        private void CreateCustomerSummarySheet(IXLWorksheet worksheet, IEnumerable<Order> orders, IEnumerable<Customer> customers)
         {
             var customerSummary = orders
                 .GroupBy(o => o.CustomerId)
@@ -287,7 +299,7 @@ namespace WinFormsDataApp.Services.Reports
             worksheet.Columns().AdjustToContents();
         }
 
-        private async Task ExportOrdersToWorksheet(IXLWorksheet worksheet, IEnumerable<Order> orders, IEnumerable<Customer> customers)
+        private void ExportOrdersToWorksheet(IXLWorksheet worksheet, IEnumerable<Order> orders, IEnumerable<Customer> customers)
         {
             var customerLookup = customers.ToDictionary(c => c.Id, c => c.Name);
 

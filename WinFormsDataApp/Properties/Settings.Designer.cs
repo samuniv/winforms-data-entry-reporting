@@ -86,5 +86,20 @@ namespace WinFormsDataApp.Properties
                 this["RememberWindowPosition"] = value;
             }
         }
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Users\\Public\\Documents\\Backups")]
+        public string DefaultBackupPath
+        {
+            get
+            {
+                return ((string)(this["DefaultBackupPath"]));
+            }
+            set
+            {
+                this["DefaultBackupPath"] = value;
+            }
+        }
     }
 }
