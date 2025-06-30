@@ -61,6 +61,7 @@ A self‑contained Windows desktop application for managing customer and order d
 ### 4.0 Main Application Form
 
 - **UI**: `MainForm` with:
+
   - Menu bar with File, Data, Reports, Tools, Help menus
   - Toolbar with quick access buttons for common actions
   - Status bar showing connection status and current user
@@ -76,6 +77,7 @@ A self‑contained Windows desktop application for managing customer and order d
 ### 4.1 Data Models
 
 - **Customer Entity**:
+
   - `Id` (int, primary key, auto-increment)
   - `Name` (string, required, max 100 chars)
   - `Email` (string, required, unique, email format)

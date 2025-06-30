@@ -9,7 +9,7 @@
         "testStrategy": "Verify that the project compiles successfully. Check that all NuGet packages are correctly referenced and the `licenses.licx` file for ComponentOne is present and configured.",
         "priority": "high",
         "dependencies": [],
-        "status": "in-progress",
+        "status": "done",
         "subtasks": []
       },
       {
@@ -22,7 +22,7 @@
         "dependencies": [
           1
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -30,7 +30,7 @@
             "description": "Create the `Customer` and `Order` C# classes. Add properties like `Id`, `Name`, `Email` for `Customer`, and `Id`, `OrderDate`, `CustomerId` for `Order`. Use data annotations for constraints like `[Required]` and `[MaxLength]`.",
             "dependencies": [],
             "details": "Define the C# classes for Customer and Order entities, including properties and data annotations for validation and database schema generation.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -41,7 +41,7 @@
               1
             ],
             "details": "Implement the Entity Framework Core DbContext, define DbSets for the entities, and configure their relationships using the OnModelCreating method.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -52,7 +52,7 @@
               2
             ],
             "details": "Generate the initial database migration script using EF Core tools based on the defined DbContext and entity models.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -63,7 +63,7 @@
               3
             ],
             "details": "Create a DbInitializer class to programmatically apply migrations and seed initial data. Integrate this class into the application's startup logic.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           }
         ]
@@ -78,7 +78,7 @@
         "dependencies": [
           1
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": []
       },
       {
@@ -92,7 +92,7 @@
           2,
           3
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -100,7 +100,7 @@
             "description": "Create the visual layout for the customer management form, including all necessary input fields (e.g., name, email, address), labels, and action buttons (e.g., Save, Cancel).",
             "dependencies": [],
             "details": "Use the form designer to place and configure controls like TextBox, Label, and Button. Ensure the layout is logical and user-friendly. Name the controls appropriately for easy access in the code-behind.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -109,7 +109,7 @@
             "description": "Develop the data access layer class `CustomerRepository` responsible for interacting with the database. Implement asynchronous methods for Create, Read, Update, and Delete operations on customer data.",
             "dependencies": [],
             "details": "Create methods such as `AddAsync(Customer customer)`, `GetByIdAsync(int id)`, `UpdateAsync(Customer customer)`, and `DeleteAsync(int id)`. This class will abstract all data persistence logic from the UI.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -120,7 +120,7 @@
               1
             ],
             "details": "Add a `BindingSource` to the form. Set its `DataSource` to the customer model. For each input control, configure its data bindings in the designer or in code to link control properties (e.g., `Text`) to the properties of the model via the `BindingSource`.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -131,7 +131,7 @@
               1
             ],
             "details": "Add an `ErrorProvider` to the form. Handle the `Validating` event for each input control that requires validation. In the event handler, check the input value and use `errorProvider.SetError(control, \"Error message\")` if it's invalid.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -144,7 +144,7 @@
               4
             ],
             "details": "In the Save button's click event handler, first call `this.ValidateChildren()` to run all validations. If the form is valid, determine if the customer is new or existing. Call the appropriate `AddAsync` or `UpdateAsync` method from the repository, ensuring the repository method itself manages a `DbTransaction` to commit or roll back the operation.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           }
         ]
@@ -161,7 +161,7 @@
           3,
           4
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -169,7 +169,7 @@
             "description": "Create the visual layout for the order management form. This includes adding all necessary input fields like Order ID, Order Date, Quantity, and a ComboBox for selecting a customer.",
             "dependencies": [],
             "details": "Use a visual designer or markup language (e.g., XAML, HTML) to lay out the form controls. Include labels, text boxes for order details, a date picker for OrderDate, a numeric input for Quantity, and a ComboBox for customer selection. Add Save and Cancel buttons.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -178,7 +178,7 @@
             "description": "Develop the data access layer for orders. This repository will handle all database interactions, including creating new orders, modifying existing ones, and marking orders as deleted without physically removing them from the database.",
             "dependencies": [],
             "details": "Create an `OrderRepository` class. Implement an `Add(Order order)` method for new records, an `Update(Order order)` method for changes, and a `SoftDelete(int orderId)` method that sets an `IsDeleted` flag to true.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -190,7 +190,7 @@
               2
             ],
             "details": "In the form's loading logic, use a customer repository to fetch and bind the list of customers to the ComboBox's item source. Set up two-way data binding for the OrderDate, Quantity, and other fields to properties of an Order model object.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -201,7 +201,7 @@
               3
             ],
             "details": "Implement validation logic within the data model or form logic. For OrderDate, check if the selected date is greater than the current date. For Quantity, ensure the value is greater than zero. Provide user-friendly error messages for invalid fields.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -212,7 +212,7 @@
               3
             ],
             "details": "After populating the customer ComboBox, check if its item count is zero. If it is, set the 'IsEnabled' property of the 'Save' button to false. Optionally, display a message on the form indicating that customers must be added first.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           }
         ]
@@ -228,7 +228,7 @@
           4,
           5
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -236,7 +236,7 @@
             "description": "Create the main `DashboardForm`, add a `C1FlexGrid` control, and bind it to the raw order data source. Configure the grid's columns, sorting, and filtering capabilities.",
             "dependencies": [],
             "details": "Create the main form for the dashboard. Add the C1FlexGrid control from the ComponentOne suite. Establish a data binding to the primary order dataset. Configure grid properties to enable user-driven sorting by clicking column headers and filtering options for key fields like customer, product, or date.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -247,7 +247,7 @@
               1
             ],
             "details": "Implement a method that takes the raw order collection as input. Use LINQ to group the orders, for example, by month and year. For each group, calculate the sum of the order totals. The query should return a new collection of objects, where each object represents a data point for the chart (e.g., { Month: 'Jan 2023', TotalSales: 50000 }).",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -258,7 +258,7 @@
               2
             ],
             "details": "Place the C1Chart control on the form. Set its DataSource property to the result of the LINQ aggregation query developed in the previous subtask. Map the chart's X-axis to the grouping dimension (e.g., Month) and the Y-axis to the aggregated value (e.g., TotalSales). Customize visual properties like colors, fonts, and chart title to ensure clarity and professional appearance.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -270,7 +270,7 @@
               3
             ],
             "details": "Create a new service class, `DataRefreshService`, possibly using a timer to trigger data fetches at regular intervals. When new data is available, the service will raise an `OnDataChanged` event. In the `DashboardForm`, create an event handler for this event. The handler will re-fetch the data, re-execute the LINQ query, and re-bind both the C1FlexGrid and C1Chart to reflect the latest information.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           }
         ]
@@ -414,7 +414,7 @@
     ],
     "metadata": {
       "created": "2025-06-29T19:12:46.716Z",
-      "updated": "2025-06-29T19:18:44.958Z",
+      "updated": "2025-06-30T03:12:53.231Z",
       "description": "Tasks for master context"
     }
   }
