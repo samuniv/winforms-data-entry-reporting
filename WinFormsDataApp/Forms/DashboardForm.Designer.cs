@@ -21,6 +21,8 @@ namespace WinFormsDataApp.Forms
             this.panelGridControls = new System.Windows.Forms.Panel();
             this.btnExportGrid = new System.Windows.Forms.Button();
             this.btnRefresh = new System.Windows.Forms.Button();
+            this.btnExportExcel = new System.Windows.Forms.Button();
+            this.btnSummaryReport = new System.Windows.Forms.Button();
             this.groupBoxChart = new System.Windows.Forms.GroupBox();
             this.chart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.labelTitle = new System.Windows.Forms.Label();
@@ -85,6 +87,8 @@ namespace WinFormsDataApp.Forms
             // 
             this.panelGridControls.Controls.Add(this.btnExportGrid);
             this.panelGridControls.Controls.Add(this.btnRefresh);
+            this.panelGridControls.Controls.Add(this.btnExportExcel);
+            this.panelGridControls.Controls.Add(this.btnSummaryReport);
             this.panelGridControls.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panelGridControls.Location = new System.Drawing.Point(3, 302);
             this.panelGridControls.Name = "panelGridControls";
@@ -110,6 +114,26 @@ namespace WinFormsDataApp.Forms
             this.btnRefresh.Text = "Refresh";
             this.btnRefresh.UseVisualStyleBackColor = true;
             this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
+            // 
+            // btnExportExcel
+            // 
+            this.btnExportExcel.Location = new System.Drawing.Point(210, 8);
+            this.btnExportExcel.Name = "btnExportExcel";
+            this.btnExportExcel.Size = new System.Drawing.Size(100, 25);
+            this.btnExportExcel.TabIndex = 2;
+            this.btnExportExcel.Text = "Export Excel";
+            this.btnExportExcel.UseVisualStyleBackColor = true;
+            this.btnExportExcel.Click += new System.EventHandler(this.btnExportExcel_Click);
+            // 
+            // btnSummaryReport
+            // 
+            this.btnSummaryReport.Location = new System.Drawing.Point(320, 8);
+            this.btnSummaryReport.Name = "btnSummaryReport";
+            this.btnSummaryReport.Size = new System.Drawing.Size(120, 25);
+            this.btnSummaryReport.TabIndex = 3;
+            this.btnSummaryReport.Text = "Summary Report";
+            this.btnSummaryReport.UseVisualStyleBackColor = true;
+            this.btnSummaryReport.Click += new System.EventHandler(this.btnSummaryReport_Click);
             // 
             // groupBoxChart
             // 
@@ -175,6 +199,8 @@ namespace WinFormsDataApp.Forms
         private System.Windows.Forms.Panel panelGridControls;
         private System.Windows.Forms.Button btnExportGrid;
         private System.Windows.Forms.Button btnRefresh;
+        private System.Windows.Forms.Button btnExportExcel;
+        private System.Windows.Forms.Button btnSummaryReport;
         private System.Windows.Forms.GroupBox groupBoxChart;
         private System.Windows.Forms.DataVisualization.Charting.Chart chart;
         private System.Windows.Forms.Label labelTitle;

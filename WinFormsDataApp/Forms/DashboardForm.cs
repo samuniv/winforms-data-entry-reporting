@@ -12,6 +12,7 @@ using System.Windows.Forms.DataVisualization.Charting;
 using WinFormsDataApp.Models;
 using WinFormsDataApp.Repositories;
 using WinFormsDataApp.Services;
+using WinFormsDataApp.Services.Reports;
 using WinFormsDataApp.Data;
 
 namespace WinFormsDataApp.Forms
@@ -20,6 +21,8 @@ namespace WinFormsDataApp.Forms
     {
         private readonly OrderRepository _orderRepository;
         private readonly CustomerRepository _customerRepository;
+        private readonly ReportService _reportService;
+        private readonly ExportService _exportService;
         private DataRefreshService? _dataRefreshService;
         private BindingSource _ordersBindingSource;
         private BindingSource _chartDataBindingSource;
@@ -31,6 +34,8 @@ namespace WinFormsDataApp.Forms
             var context = contextFactory.CreateDbContext([]);
             _orderRepository = new OrderRepository(context);
             _customerRepository = new CustomerRepository(context);
+            _reportService = new ReportService(_customerRepository, _orderRepository);
+            _exportService = new ExportService();
             _ordersBindingSource = new BindingSource();
             _chartDataBindingSource = new BindingSource();
         }
@@ -85,15 +90,33 @@ namespace WinFormsDataApp.Forms
             // Configure columns
             if (dataGridViewOrders.Columns.Count > 0)
             {
-                dataGridViewOrders.Columns["Id"].HeaderText = "Order ID";
-                dataGridViewOrders.Columns["Quantity"].HeaderText = "Quantity";
-                dataGridViewOrders.Columns["OrderDate"].HeaderText = "Order Date";
-                dataGridViewOrders.Columns["CustomerName"].HeaderText = "Customer";
-                dataGridViewOrders.Columns["CustomerEmail"].HeaderText = "Email";
-                dataGridViewOrders.Columns["TotalValue"].HeaderText = "Total Value";
+                var idColumn = dataGridViewOrders.Columns["Id"];
+                if (idColumn != null)
+                    idColumn.HeaderText = "Order ID";
 
-                // Format currency column
-                dataGridViewOrders.Columns["TotalValue"].DefaultCellStyle.Format = "C";
+                var quantityColumn = dataGridViewOrders.Columns["Quantity"];
+                if (quantityColumn != null)
+                    quantityColumn.HeaderText = "Quantity";
+
+                var orderDateColumn = dataGridViewOrders.Columns["OrderDate"];
+                if (orderDateColumn != null)
+                    orderDateColumn.HeaderText = "Order Date";
+
+                var customerNameColumn = dataGridViewOrders.Columns["CustomerName"];
+                if (customerNameColumn != null)
+                    customerNameColumn.HeaderText = "Customer";
+
+                var customerEmailColumn = dataGridViewOrders.Columns["CustomerEmail"];
+                if (customerEmailColumn != null)
+                    customerEmailColumn.HeaderText = "Email";
+
+                var totalValueColumn = dataGridViewOrders.Columns["TotalValue"];
+                if (totalValueColumn != null)
+                {
+                    totalValueColumn.HeaderText = "Total Value";
+                    // Format currency column
+                    totalValueColumn.DefaultCellStyle.Format = "C";
+                }
             }
 
             // Enable sorting
@@ -283,6 +306,117 @@ namespace WinFormsDataApp.Forms
                     }
                     writer.WriteLine(string.Join(",", values));
                 }
+            }
+        }
+
+        private async void btnExportExcel_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                btnExportExcel.Enabled = false;
+                btnExportExcel.Text = "Exporting...";
+
+                using var saveDialog = new SaveFileDialog
+                {
+                    Filter = "Excel files (*.xlsx)|*.xlsx|All files (*.*)|*.*",
+                    DefaultExt = "xlsx",
+                    AddExtension = true,
+                    FileName = $"Orders_Export_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx"
+                };
+
+                if (saveDialog.ShowDialog() == DialogResult.OK)
+                {
+                    var orders = await _orderRepository.GetAllWithCustomersAsync();
+                    var customers = await _customerRepository.GetAllAsync();
+
+                    await _exportService.ExportOrdersToExcelAsync(orders, customers, saveDialog.FileName);
+
+                    var result = MessageBox.Show(
+                        "Excel export completed successfully!\n\nWould you like to open the file?",
+                        "Export Complete",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Question);
+
+                    if (result == DialogResult.Yes)
+                    {
+                        _exportService.OpenExcelFile(saveDialog.FileName);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggingService.LogError(ex, "Failed to export orders to Excel");
+                MessageBox.Show($"Error exporting to Excel: {ex.Message}", "Export Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                btnExportExcel.Enabled = true;
+                btnExportExcel.Text = "Export Excel";
+            }
+        }
+
+        private async void btnSummaryReport_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                btnSummaryReport.Enabled = false;
+                btnSummaryReport.Text = "Generating...";
+
+                // Show date range picker dialog
+                using var dateRangeForm = new DateRangeForm();
+                if (dateRangeForm.ShowDialog() == DialogResult.OK)
+                {
+                    var startDate = dateRangeForm.StartDate;
+                    var endDate = dateRangeForm.EndDate;
+
+                    using var saveDialog = new SaveFileDialog
+                    {
+                        Filter = "PDF files (*.pdf)|*.pdf|Excel files (*.xlsx)|*.xlsx|All files (*.*)|*.*",
+                        DefaultExt = "pdf",
+                        AddExtension = true,
+                        FileName = $"Summary_Report_{startDate:yyyyMMdd}_to_{endDate:yyyyMMdd}.pdf"
+                    };
+
+                    if (saveDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        var orders = await _orderRepository.GetByDateRangeAsync(startDate, endDate);
+                        var customers = await _customerRepository.GetAllAsync();
+
+                        if (Path.GetExtension(saveDialog.FileName).ToLower() == ".pdf")
+                        {
+                            // Generate PDF report
+                            var filePath = await _reportService.GenerateSummaryReportAsync(orders, customers, startDate, endDate, saveDialog.FileName, true);
+                        }
+                        else
+                        {
+                            // Generate Excel report
+                            await _exportService.ExportSummaryToExcelAsync(orders, customers, startDate, endDate, saveDialog.FileName);
+
+                            var result = MessageBox.Show(
+                                "Summary report generated successfully!\n\nWould you like to open the file?",
+                                "Report Complete",
+                                MessageBoxButtons.YesNo,
+                                MessageBoxIcon.Question);
+
+                            if (result == DialogResult.Yes)
+                            {
+                                _exportService.OpenExcelFile(saveDialog.FileName);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggingService.LogError(ex, "Failed to generate summary report");
+                MessageBox.Show($"Error generating summary report: {ex.Message}", "Report Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                btnSummaryReport.Enabled = true;
+                btnSummaryReport.Text = "Summary Report";
             }
         }
 

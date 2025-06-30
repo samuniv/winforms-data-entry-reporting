@@ -44,6 +44,7 @@ namespace WinFormsDataApp.Forms
             labelId = new Label();
             buttonNew = new Button();
             buttonRefresh = new Button();
+            buttonPrintInvoice = new Button();
             errorProvider = new ErrorProvider(components);
             bindingSource = new BindingSource(components);
             statusStrip = new StatusStrip();
@@ -232,6 +233,17 @@ namespace WinFormsDataApp.Forms
             buttonRefresh.UseVisualStyleBackColor = true;
             buttonRefresh.Click += ButtonRefresh_Click;
             // 
+            // buttonPrintInvoice
+            // 
+            buttonPrintInvoice.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            buttonPrintInvoice.Location = new Point(174, 318);
+            buttonPrintInvoice.Name = "buttonPrintInvoice";
+            buttonPrintInvoice.Size = new Size(100, 30);
+            buttonPrintInvoice.TabIndex = 4;
+            buttonPrintInvoice.Text = "Print &Invoice";
+            buttonPrintInvoice.UseVisualStyleBackColor = true;
+            buttonPrintInvoice.Click += ButtonPrintInvoice_Click;
+            // 
             // errorProvider
             // 
             errorProvider.BlinkStyle = ErrorBlinkStyle.NeverBlink;
@@ -259,6 +271,7 @@ namespace WinFormsDataApp.Forms
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(784, 544);
             Controls.Add(statusStrip);
+            Controls.Add(buttonPrintInvoice);
             Controls.Add(buttonRefresh);
             Controls.Add(buttonNew);
             Controls.Add(groupBoxDetails);
@@ -298,6 +311,7 @@ namespace WinFormsDataApp.Forms
         private Button buttonDelete;
         private Button buttonNew;
         private Button buttonRefresh;
+        private Button buttonPrintInvoice;
         private ErrorProvider errorProvider;
         private BindingSource bindingSource;
         private BindingSource customerBindingSource;

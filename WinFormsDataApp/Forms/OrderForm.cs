@@ -4,6 +4,8 @@ using System.Configuration;
 using WinFormsDataApp.Data;
 using WinFormsDataApp.Models;
 using WinFormsDataApp.Repositories;
+using WinFormsDataApp.Services.Reports;
+using WinFormsDataApp.Services;
 
 namespace WinFormsDataApp.Forms
 {
@@ -12,6 +14,7 @@ namespace WinFormsDataApp.Forms
         private readonly AppDbContext _dbContext;
         private readonly OrderRepository _orderRepository;
         private readonly CustomerRepository _customerRepository;
+        private readonly ReportService _reportService;
         private Order _currentOrder;
         private bool _isNewOrder;
         private bool _isDirty;
@@ -30,6 +33,9 @@ namespace WinFormsDataApp.Forms
             // Initialize repositories
             _orderRepository = new OrderRepository(_dbContext);
             _customerRepository = new CustomerRepository(_dbContext);
+
+            // Initialize services
+            _reportService = new ReportService(_customerRepository, _orderRepository);
 
             // Initialize current order
             _currentOrder = new Order();
@@ -484,6 +490,72 @@ namespace WinFormsDataApp.Forms
                     dataGridView.CurrentCell = dataGridView.Rows[i].Cells[0];
                     break;
                 }
+            }
+        }
+
+        private async void ButtonPrintInvoice_Click(object sender, EventArgs e)
+        {
+            if (dataGridView.CurrentRow?.DataBoundItem is not Order selectedOrder)
+            {
+                MessageBox.Show("Please select an order to print an invoice.", "No Order Selected",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            try
+            {
+                SetStatus("Generating invoice...");
+
+                // Get customer information
+                var customer = await _customerRepository.GetByIdAsync(selectedOrder.CustomerId);
+                if (customer == null)
+                {
+                    MessageBox.Show("Customer information not found for this order.", "Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                // Show save dialog
+                using var saveDialog = new SaveFileDialog
+                {
+                    Title = "Save Invoice PDF",
+                    Filter = "PDF Files (*.pdf)|*.pdf",
+                    FileName = $"Invoice_{selectedOrder.Id}_{DateTime.Now:yyyyMMdd_HHmmss}.pdf",
+                    DefaultExt = "pdf"
+                };
+
+                if (saveDialog.ShowDialog() == DialogResult.OK)
+                {
+                    // Generate and save the invoice
+                    var filePath = await _reportService.GenerateInvoiceAsync(selectedOrder, customer,
+                                                                          saveDialog.FileName, true);
+
+                    SetStatus($"Invoice generated: {Path.GetFileName(filePath)}");
+
+                    // Ask if user wants to open the file
+                    var result = MessageBox.Show(
+                        "Invoice generated successfully!\n\nWould you like to open the PDF file?",
+                        "Invoice Generated",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Question);
+
+                    if (result == DialogResult.No)
+                    {
+                        // Open manually if they said no to auto-open
+                        _reportService.OpenPdfFile(filePath);
+                    }
+                }
+                else
+                {
+                    SetStatus("Invoice generation cancelled");
+                }
+            }
+            catch (Exception ex)
+            {
+                SetStatus("Error generating invoice");
+                LoggingService.LogError(ex, $"Failed to generate invoice for Order {selectedOrder.Id}");
+                MessageBox.Show($"Error generating invoice: {ex.Message}", "Invoice Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

@@ -285,7 +285,7 @@
         "dependencies": [
           6
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
@@ -293,7 +293,7 @@
             "description": "Design the `Invoice.xml` and `Summary.xml` report templates using the C1Report Designer.",
             "dependencies": [],
             "details": "Use the standalone C1Report Designer application to create the visual layout, data fields, and groupings for both the detailed invoice and the summary reports. The final output will be two XML definition files that will be embedded in the project.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -304,7 +304,7 @@
               1
             ],
             "details": "Create a new service class responsible for handling all report generation logic. This service will contain methods to load a specified report definition XML, attach a data source (e.g., a DataTable or a list of objects), and render the report into a C1PrintDocument for previewing or exporting.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -315,7 +315,7 @@
               2
             ],
             "details": "Add a button or menu item to the UI that, when clicked, invokes the `ReportService`. The service will be called with the `Invoice.xml` definition and the data for a specific invoice. The resulting rendered report will then be exported to a PDF file, and a file-save dialog will be presented to the user.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -324,7 +324,7 @@
             "description": "Add 'Export to Excel' functionality to the dashboard's `C1FlexGrid`.",
             "dependencies": [],
             "details": "Implement a new 'Export to Excel' button on the dashboard. This button will trigger the `C1FlexGrid.SaveExcel` method to directly export the grid's current content, including sorting and filtering, into an XLSX file.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           }
         ]
@@ -332,28 +332,90 @@
       {
         "id": 8,
         "title": "Implement User Preferences and Settings Form",
-        "description": "Develop a settings form to allow users to customize application preferences, such as UI theme (light/dark) and default file paths. Persist these settings between application sessions.",
-        "details": "1. Create a `SettingsForm.cs`. Add controls for theme selection (e.g., `ComboBox` with 'Light' and 'Dark' options) and a `TextBox` with a 'Browse' button for the default export path. 2. Use the built-in `Properties.Settings.Default` mechanism for persistence. Define user-scoped settings for `Theme` (string) and `DefaultExportPath` (string) in the project's settings designer. 3. On `SettingsForm` load, populate the controls from the saved settings. On save/close, call `Properties.Settings.Default.Save()`. 4. In `Program.Main` or `MainForm_Load`, apply the saved theme by changing form colors and styles. Use the saved path as the initial directory for `SaveFileDialog`.",
-        "testStrategy": "Open the settings form, change the theme and path, and close the application. Re-open the application and verify the new theme is applied and the settings form shows the saved values. Test the export functionality to confirm it defaults to the new path.",
-        "priority": "low",
+        "description": "Develop a comprehensive settings form allowing users to customize application preferences. The implementation includes a tabbed interface for Appearance, Paths, and Behavior settings, a dedicated ThemeManager service for robust theme application, and persistence of settings between sessions. Key settings include UI theme (light/dark), default export path, auto-save interval, and window position memory.",
+        "status": "done",
         "dependencies": [
           3
         ],
-        "status": "pending",
-        "subtasks": []
+        "priority": "low",
+        "details": "1. **Settings Infrastructure:** Use `Properties.Settings.settings` to manage four user-scoped settings: `Theme` (string), `DefaultExportPath` (string), `AutoSaveInterval` (int), and `RememberWindowPosition` (bool).\n2. **ThemeManager Service:** Implement a central `ThemeManager` service to handle dynamic theme application. This service should recursively apply themes to all controls on all open forms, with special handling for various control types like `DataGridView`, `MenuStrip`, etc. Include logging for debugging theme operations.\n3. **SettingsForm UI:** Create a `SettingsForm` with a professional tabbed layout:\n    - **Appearance Tab:** Contains a `ComboBox` for theme selection (Light/Dark).\n    - **Paths Tab:** Features a `TextBox` and a 'Browse' button (opening a folder browser dialog) for the default export path.\n    - **Behavior Tab:** Includes controls for `AutoSaveInterval` (with numeric validation) and a `RememberWindowPosition` checkbox.\n4. **Form Logic & Integration:** Implement robust form logic including input validation, change tracking with unsaved changes warnings, and a 'Reset to Defaults' button. Integrate the form into the `MainForm` via a 'Settings' item in the 'Tools' menu. Ensure settings are saved to `user.config` and themes are applied immediately upon saving and on application startup.",
+        "testStrategy": "1. **Startup & Defaults:** Verify the application loads with the default theme and settings. Check logs for theme application confirmation.\n2. **UI Access & Theming:** Access the settings form via 'Tools > Settings'. Confirm the form and all its controls (tabs, comboboxes, etc.) are correctly themed.\n3. **Settings Modification & Validation:**\n    - Change the theme and verify it's applied immediately to all open forms.\n    - Set a new default export path and confirm the export dialog uses this new path.\n    - Test validation for the auto-save interval (e.g., non-numeric, out-of-range values).\n    - Toggle 'Remember window position', restart the app, and verify the main window's position is restored correctly.\n4. **Persistence:** After changing all settings, close and restart the application. Verify all changes have been persisted and are correctly loaded and applied.\n5. **Reset Functionality:** Use the 'Reset to Defaults' button and confirm all settings revert to their initial state in the UI and are saved correctly.",
+        "subtasks": [
+          {
+            "id": "subtask-8-1",
+            "description": "Create persistent user settings infrastructure for Theme, DefaultExportPath, AutoSaveInterval, and RememberWindowPosition.",
+            "status": "done"
+          },
+          {
+            "id": "subtask-8-2",
+            "description": "Implement a comprehensive ThemeManager service for recursive theme application across all forms and controls.",
+            "status": "done"
+          },
+          {
+            "id": "subtask-8-3",
+            "description": "Design and build the SettingsForm UI with a tabbed interface for Appearance, Paths, and Behavior.",
+            "status": "done"
+          },
+          {
+            "id": "subtask-8-4",
+            "description": "Implement form logic including validation, change tracking, unsaved changes warnings, and a 'Reset to Defaults' feature.",
+            "status": "done"
+          },
+          {
+            "id": "subtask-8-5",
+            "description": "Integrate the SettingsForm into the MainForm via the Tools menu and ensure theme is applied on startup.",
+            "status": "done"
+          },
+          {
+            "id": "subtask-8-6",
+            "description": "Verify persistence, validation, and theme application through comprehensive testing.",
+            "status": "done"
+          }
+        ]
       },
       {
         "id": 9,
         "title": "Set Up Global Error Handling and Logging",
-        "description": "Implement robust global error handling and structured logging to ensure application stability and provide diagnostics for troubleshooting.",
-        "details": "1. In `Program.Main`, subscribe to the `Application.ThreadException` and `AppDomain.CurrentDomain.UnhandledException` events. 2. Create a handler method for these events that logs the exception details using Serilog and displays a user-friendly `ErrorDialog`. 3. Configure Serilog to write to a rolling log file (e.g., `logs\\log-.txt`). Include timestamp, log level, message, and exception details in the log output template. 4. The `ErrorDialog` should show a simple message to the user and offer to show more details or copy the error to the clipboard.",
-        "testStrategy": "Introduce a deliberate exception (e.g., a `NullReferenceException` on a button click) and verify that the global exception handler catches it. Check that the `ErrorDialog` is displayed and that a detailed error entry is written to the log file.",
-        "priority": "medium",
+        "description": "Implemented a robust global error handling and structured logging system to ensure application stability and provide comprehensive diagnostics for troubleshooting. The system is fully integrated and tested.",
+        "status": "done",
         "dependencies": [
           1
         ],
-        "status": "pending",
-        "subtasks": []
+        "priority": "medium",
+        "details": "1. **Serilog Integration**: Added Serilog with a file sink for structured logging to rolling daily log files (`logs/log-YYYYMMDD.txt`).\n2. **LoggingService**: Created a centralized `LoggingService` with methods for different log levels (Error, Warning, Information, Debug, Fatal).\n3. **GlobalExceptionHandler**: Implemented a comprehensive global exception handler for both UI thread (`Application.ThreadException`) and non-UI thread (`AppDomain.CurrentDomain.UnhandledException`) exceptions.\n4. **ErrorDialog**: Created a user-friendly `ErrorDialog` with options to show/hide technical details and copy error information to the clipboard.\n5. **Program.cs Integration**: Updated the main entry point (`Program.cs`) to initialize the logging and exception handling systems before the application starts.\n6. **Test Menu**: Added a \"Test Exception\" menu item under the \"Tools\" menu for easy testing of the exception handling system.",
+        "testStrategy": "Testing was performed by using the 'Test Exception' menu item and by observing behavior during known issues (e.g., Chart control dependency). Verification confirmed that:\n- Application startup and shutdown are properly logged with timestamps.\n- The global exception handler successfully catches and logs all unhandled exceptions.\n- Log files are created with the correct rolling daily format (`log-YYYYMMDD.txt`).\n- The `ErrorDialog` is displayed correctly, providing user-friendly error reporting.\n- The application remains stable and continues running after non-fatal exceptions are handled.",
+        "subtasks": [
+          {
+            "id": "subtask-9-1",
+            "description": "Integrate Serilog for structured file logging to rolling daily files.",
+            "status": "done"
+          },
+          {
+            "id": "subtask-9-2",
+            "description": "Create a centralized LoggingService for standardized log entries.",
+            "status": "done"
+          },
+          {
+            "id": "subtask-9-3",
+            "description": "Implement global exception handlers for UI and non-UI threads.",
+            "status": "done"
+          },
+          {
+            "id": "subtask-9-4",
+            "description": "Design and implement a user-friendly ErrorDialog with details and copy functionality.",
+            "status": "done"
+          },
+          {
+            "id": "subtask-9-5",
+            "description": "Initialize logging and exception handling in Program.cs on application startup.",
+            "status": "done"
+          },
+          {
+            "id": "subtask-9-6",
+            "description": "Add a 'Test Exception' menu item for verification purposes.",
+            "status": "done"
+          }
+        ]
       },
       {
         "id": 10,
@@ -367,15 +429,15 @@
           4,
           5
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": [
           {
             "id": 1,
             "title": "Develop CSV Import Wizard",
             "description": "Develop the CSV import wizard for parsing and column mapping.",
             "dependencies": [],
-            "details": "Create a multi-step user interface that guides the user through uploading a CSV file, previewing the data, and mapping the CSV columns to the target database table fields. This includes handling file parsing, delimiter detection, and providing a clear mapping interface.",
-            "status": "pending",
+            "details": "Create a multi-step user interface that guides the user through uploading a CSV file, previewing the data, and mapping the CSV columns to the target database table fields. This includes handling file parsing, delimiter detection, and providing a clear mapping interface.\n<info added on 2025-06-30T04:01:52.337Z>\nProgress Update: Successfully implemented core CSV import/export infrastructure:\n\nCOMPLETED:\n- DTOs for CustomerImportDto and OrderImportDto with CsvHelper attributes\n- CsvImportService with validation, customer/order parsing, and bulk save operations\n- DatabaseBackupService with SQLite backup/restore and CSV export functionality\n- CsvImportWizardForm with multi-step wizard UI (file selection, preview, import, completion)\n- Fixed all logging calls to use static LoggingService\n- Updated all repository method calls to correct names (GetAllAsync, AddAsync, GetByIdAsync)\n\nIN PROGRESS:\n- DataUtilitiesForm implementation (needs designer file and settings integration)\n- Main form integration for launching import/export features\n\nThe core import/export engine is fully functional. The wizard form provides professional UI with validation preview, error reporting, and progress tracking. The backup service handles SQLite database backups with timestamped files and safe restore operations.\n\nNext: Complete UI forms and integrate with main application.\n</info added on 2025-06-30T04:01:52.337Z>",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -386,7 +448,7 @@
               1
             ],
             "details": "Develop the backend logic to process the mapped data from the import wizard. The entire insertion process must be wrapped in a single database transaction to ensure that if any record fails to import, the entire batch is rolled back, preventing partial data updates and maintaining data integrity.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -395,7 +457,7 @@
             "description": "Implement the database backup utility.",
             "dependencies": [],
             "details": "Create a secure, administrator-only feature to generate a complete backup of the application database. The utility should create a timestamped backup file and store it in a pre-configured, secure location. This serves as a prerequisite for any restore functionality.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           },
           {
@@ -406,7 +468,7 @@
               3
             ],
             "details": "Build the functionality to restore the database from a selected backup file. This process must include strong, explicit warnings about the irreversible nature of the action and require multiple user confirmations. The application must be put into a maintenance state during the restore to prevent data corruption.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": ""
           }
         ]
@@ -414,7 +476,7 @@
     ],
     "metadata": {
       "created": "2025-06-29T19:12:46.716Z",
-      "updated": "2025-06-30T03:12:53.231Z",
+      "updated": "2025-06-30T04:16:41.817Z",
       "description": "Tasks for master context"
     }
   }

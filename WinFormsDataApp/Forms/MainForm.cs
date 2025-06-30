@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using System.Configuration;
 using WinFormsDataApp.Data;
+using WinFormsDataApp.Services;
 
 namespace WinFormsDataApp.Forms
 {
@@ -11,6 +12,12 @@ namespace WinFormsDataApp.Forms
         public MainForm()
         {
             InitializeComponent();
+
+            // Apply theme on startup
+            ThemeManager.ApplyTheme(this);
+
+            SetStatus("Ready");
+            LoggingService.LogInformation("MainForm initialized");
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -88,6 +95,55 @@ namespace WinFormsDataApp.Forms
                 "About",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information);
+        }
+
+        private void TestExceptionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var result = MessageBox.Show(
+                "This will intentionally throw an exception to test the global error handling system.\n\n" +
+                "Do you want to continue?",
+                "Test Exception Handling",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
+            if (result == DialogResult.Yes)
+            {
+                LoggingService.LogInformation("User initiated exception test");
+                GlobalExceptionHandler.TestExceptionHandling();
+            }
+        }
+
+        private void SettingsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                SetStatus("Opening Settings...");
+
+                using (var settingsForm = new SettingsForm())
+                {
+                    // Apply current theme to the settings form
+                    ThemeManager.ApplyTheme(settingsForm);
+
+                    var result = settingsForm.ShowDialog(this);
+
+                    if (result == DialogResult.OK)
+                    {
+                        SetStatus("Settings saved successfully");
+                        LoggingService.LogInformation("User updated application settings");
+                    }
+                    else
+                    {
+                        SetStatus("Settings cancelled");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggingService.LogError(ex, "Error opening settings form");
+                MessageBox.Show($"Error opening settings: {ex.Message}", "Settings Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                SetStatus("Error opening settings");
+            }
         }
 
         // Toolbar Event Handlers

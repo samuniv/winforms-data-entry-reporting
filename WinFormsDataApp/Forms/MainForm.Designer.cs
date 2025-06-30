@@ -51,6 +51,8 @@ namespace WinFormsDataApp.Forms
             settingsToolStripMenuItem = new ToolStripMenuItem();
             backupToolStripMenuItem = new ToolStripMenuItem();
             restoreToolStripMenuItem = new ToolStripMenuItem();
+            toolStripSeparator6 = new ToolStripSeparator();
+            testExceptionToolStripMenuItem = new ToolStripMenuItem();
             helpToolStripMenuItem = new ToolStripMenuItem();
             aboutToolStripMenuItem = new ToolStripMenuItem();
             toolStrip = new ToolStrip();
@@ -199,7 +201,7 @@ namespace WinFormsDataApp.Forms
             // 
             // toolsToolStripMenuItem
             // 
-            toolsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { settingsToolStripMenuItem, backupToolStripMenuItem, restoreToolStripMenuItem });
+            toolsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { settingsToolStripMenuItem, backupToolStripMenuItem, restoreToolStripMenuItem, toolStripSeparator6, testExceptionToolStripMenuItem });
             toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             toolsToolStripMenuItem.Size = new Size(58, 24);
             toolsToolStripMenuItem.Text = "&Tools";
@@ -209,6 +211,7 @@ namespace WinFormsDataApp.Forms
             settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
             settingsToolStripMenuItem.Size = new Size(144, 26);
             settingsToolStripMenuItem.Text = "&Settings";
+            settingsToolStripMenuItem.Click += SettingsToolStripMenuItem_Click;
             // 
             // backupToolStripMenuItem
             // 
@@ -221,6 +224,18 @@ namespace WinFormsDataApp.Forms
             restoreToolStripMenuItem.Name = "restoreToolStripMenuItem";
             restoreToolStripMenuItem.Size = new Size(144, 26);
             restoreToolStripMenuItem.Text = "&Restore...";
+            // 
+            // toolStripSeparator6
+            // 
+            toolStripSeparator6.Name = "toolStripSeparator6";
+            toolStripSeparator6.Size = new Size(193, 6);
+            // 
+            // testExceptionToolStripMenuItem
+            // 
+            testExceptionToolStripMenuItem.Name = "testExceptionToolStripMenuItem";
+            testExceptionToolStripMenuItem.Size = new Size(196, 26);
+            testExceptionToolStripMenuItem.Text = "&Test Exception...";
+            testExceptionToolStripMenuItem.Click += TestExceptionToolStripMenuItem_Click;
             // 
             // helpToolStripMenuItem
             // 
@@ -381,6 +396,8 @@ namespace WinFormsDataApp.Forms
         private ToolStripMenuItem settingsToolStripMenuItem;
         private ToolStripMenuItem backupToolStripMenuItem;
         private ToolStripMenuItem restoreToolStripMenuItem;
+        private ToolStripSeparator toolStripSeparator6;
+        private ToolStripMenuItem testExceptionToolStripMenuItem;
         private ToolStripMenuItem helpToolStripMenuItem;
         private ToolStripMenuItem aboutToolStripMenuItem;
         private ToolStrip toolStrip;
